@@ -1,5 +1,7 @@
 <?php
 
+namespace Xenokore\Cache\Tests;
+
 use Xenokore\Cache\Cache;
 use Xenokore\Cache\PredisClientFactory;
 
@@ -26,7 +28,7 @@ class CacheTest extends TestCase
 
         $cache = ClassHelper::callPrivateMethod($cache, '_getSimpleCacheClient');
 
-        if(!$cache){
+        if (!$cache) {
             $this->markTestSkipped(
                 'Couldn\'t connect to Redis server. Skipping `Cache` tests'
             );

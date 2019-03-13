@@ -21,7 +21,7 @@ class PredisClientFactory implements PredisClientFactoryInterface
         $config = require __DIR__ . '/../config/cache.conf.default.php';
 
         // Merge default and given configuration
-        if(!is_null($config_options)){
+        if (!is_null($config_options)) {
             $config = ArrayHelper::mergeRecursiveDistinct($config, $config_options);
         }
 
@@ -34,7 +34,6 @@ class PredisClientFactory implements PredisClientFactoryInterface
     public function createPredisClient(): ? PredisClient
     {
         try {
-
             if (!$this->enabled) {
                 return null;
             }
@@ -48,9 +47,7 @@ class PredisClientFactory implements PredisClientFactoryInterface
             }
             
             return new PredisClient($this->nodes);
-
-        } catch (ConnectionException $ex){
-
+        } catch (ConnectionException $ex) {
             return null;
         }
     }
@@ -58,7 +55,6 @@ class PredisClientFactory implements PredisClientFactoryInterface
     public function createPredisPubSubClient(): ? PredisClient
     {
         try {
-
             if (!$this->enabled) {
                 return null;
             }
@@ -73,9 +69,7 @@ class PredisClientFactory implements PredisClientFactoryInterface
             );
 
             return new PredisClient($this->nodes, $pubsub_options);
-
-        } catch (ConnectionException $ex){
-
+        } catch (ConnectionException $ex) {
             return null;
         }
     }

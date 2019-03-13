@@ -2,7 +2,7 @@
 
 namespace Xenokore\Cache;
 
-use Predis\Client as PredisClient;
+use \Predis\Client as PredisClient;
 
 interface PredisClientFactoryInterface
 {

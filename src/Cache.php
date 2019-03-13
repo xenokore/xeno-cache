@@ -8,10 +8,10 @@ use Predis\Connection\ConnectionException;
 
 /**
  * Super Lazy PSR-16 cache service
- * 
+ *
  * Borrowed some stuff from:
  * - https://github.com/subjective-php/psr-cache-redis/
- * 
+ *
  * TODO: this class could use CacheAwareTrait
  */
 class Cache implements CacheInterface
@@ -28,36 +28,37 @@ class Cache implements CacheInterface
     private function _getSimpleCacheClient()
     {
         // Return SimpleCache implementation if it already exists
-        if(isset($this->simple_cache_client)){
+        if (isset($this->simple_cache_client)) {
             return $this->simple_cache_client;
         }
 
         // A PredisClient must exist
-        if(!$this->predis_client){
+        if (!$this->predis_client) {
             return false;
         }
 
         // Check if it's possible to get the connection object
         $conn = $this->predis_client->getConnection();
-        if(!$conn){
+        if (!$conn) {
             return false;
         }
 
         // Try to connect if we aren't
-        if(!$conn->isConnected()){
+        if (!$conn->isConnected()) {
             try {
                 $conn->connect();
-            } catch (ConnectionException  $ex) {}
+            } catch (ConnectionException  $ex) {
+            }
         }
 
         // Make sure we're connected
-        if(!$conn->isConnected()){
+        if (!$conn->isConnected()) {
             return false;
         }
 
         // Create SimpleCache implementation
         $simple_cache_client = new RedisCache($this->predis_client);
-        if($simple_cache_client){
+        if ($simple_cache_client) {
             return $this->simple_cache_client = $simple_cache_client;
         }
 
@@ -65,51 +66,56 @@ class Cache implements CacheInterface
         return $this->simple_cache_client = false;
     }
 
-    private function _executeCommand(string $command, $default, array ...$arguments){
+    private function _executeCommand(string $command, $default, array ...$arguments)
+    {
         $cache = $this->_getSimpleCacheClient();
-        if(!$cache){
+        if (!$cache) {
             return $default;
         }
-        if(count($arguments) > 0){
+        if (count($arguments) > 0) {
             return $cache->$command(...$arguments);
         } else {
             return $cache->$command();
         }
     }
 
-    public function get($key, $default = null){
+    public function get($key, $default = null)
+    {
         return $this->_executeCommand(__FUNCTION__, null, func_get_args());
     }
 
-    public function set($key, $value, $ttl = null){
+    public function set($key, $value, $ttl = null)
+    {
         return $this->_executeCommand(__FUNCTION__, false, func_get_args());
     }
 
-    public function delete($key){
+    public function delete($key)
+    {
         return $this->_executeCommand(__FUNCTION__, false, func_get_args());
     }
 
-    public function clear(){
+    public function clear()
+    {
         return $this->_executeCommand(__FUNCTION__, false);
     }
 
     public function getMultiple($keys, $default = null)
     {
         $result = $this->_executeCommand(__FUNCTION__, null, func_get_args());
-        if(is_array($result)){
+        if (is_array($result)) {
             return $result;
         }
 
         $return_array = [];
 
-        if(is_null($result)){
-            foreach($keys as $key){
+        if (is_null($result)) {
+            foreach ($keys as $key) {
                 $return_array[$key] = $default;
             }
         }
 
         return [];
-   }
+    }
 
     public function setMultiple($values, $ttl = null)
     {
