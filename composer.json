@@ -1,6 +1,6 @@
 {
     "name": "xenokore/cache",
-    "version": "1.0.1",
+    "version": "1.0.2",
     "type": "library",
     "description": "Redis cache library",
     "keywords": ["redis", "cache"],
@@ -12,7 +12,6 @@
         "homepage": "https://xenokore.com",
         "role": "Developer"
     }],
-    "minimum-stability": "dev",
     "autoload": {
         "psr-4": {
             "Xenokore\\Cache\\": "src/"
