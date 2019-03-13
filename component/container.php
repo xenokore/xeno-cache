@@ -11,7 +11,7 @@ return [
         // return new PredisClientFactory($container->get('config')['cache'] ?? []);
 
         // hopefully the container understands to use the config class as an array
-        return new PredisClientFactory($container->get('config.cache') ?? null);
+        return new PredisClientFactory($container->get('config')['cache'] ?? null);
     },
 
     Cache::class => function ($container) {
