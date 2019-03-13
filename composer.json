@@ -31,7 +31,7 @@
         "php": "^7.3",
         "psr/simple-cache": "^1.0@dev",
         "predis/predis": "^2.0@dev",
-        "xenokore/utility": "^0.0.1@alpha",
+        "xenokore/utility": "^1",
         "xenokore/psr-cache-redis": "dev-master"
     },
     "require-dev": {
