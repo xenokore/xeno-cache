@@ -6,9 +6,9 @@ return [
 
     'nodes' => [
         // [
-            'scheme' => 'tcp',
-            'host'   => 'localhost',
-            'port'   => 6379,
+        'scheme' => 'tcp',
+        'host'   => 'localhost',
+        'port'   => 6379,
         // ],
     ],
 

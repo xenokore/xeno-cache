@@ -15,31 +15,9 @@ class EventCache implements EventCacheInterface
         $this->client = $factory->createPredisPubSubClient();
     }
 
-    private function _checkConnection(): bool
-    {
-        if (!$this->client) {
-            return false;
-        }
-
-        $conn = $this->client->getConnection();
-
-        if (!$conn) {
-            return false;
-        }
-
-        if (!$conn->isConnected()) {
-            try {
-                $conn->connect();
-            } catch (\Exception $ex) {
-            }
-        }
-
-        return $conn->isConnected();
-    }
-
     public function publish(string $channel, string $data)
     {
-        if (!$this->_checkConnection()) {
+        if (!$this->checkConnection()) {
             return false;
         }
 
@@ -56,7 +34,7 @@ class EventCache implements EventCacheInterface
      */
     public function subscribe(string $channel, callable $callback)
     {
-        if (!$this->_checkConnection()) {
+        if (!$this->checkConnection()) {
             return false;
         }
 
@@ -80,5 +58,27 @@ class EventCache implements EventCacheInterface
         }
 
         return $pubsub;
+    }
+
+    private function checkConnection(): bool
+    {
+        if (!$this->client) {
+            return false;
+        }
+
+        $conn = $this->client->getConnection();
+
+        if (!$conn) {
+            return false;
+        }
+
+        if (!$conn->isConnected()) {
+            try {
+                $conn->connect();
+            } catch (\Exception $ex) {
+            }
+        }
+
+        return $conn->isConnected();
     }
 }

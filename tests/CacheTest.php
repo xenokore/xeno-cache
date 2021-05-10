@@ -26,7 +26,7 @@ class CacheTest extends TestCase
 
         $this->assertInstanceOf(Cache::class, $cache);
 
-        $cache = ClassHelper::callPrivateMethod($cache, '_getSimpleCacheClient');
+        $cache = ClassHelper::callPrivateMethod($cache, 'getSimpleCacheClient');
 
         if (!$cache) {
             $this->markTestSkipped(
@@ -73,7 +73,7 @@ class CacheTest extends TestCase
 
         // Must now be set
         $this->assertEquals($value, $this->cache->get($key));
-        
+
         // Delete
         $result = $this->cache->delete($key);
         $this->assertTrue($result, 'delete() must return true if success');

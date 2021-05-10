@@ -25,7 +25,75 @@ class Cache implements CacheInterface
         $this->predis_client = $factory->createPredisClient();
     }
 
-    private function _getSimpleCacheClient()
+    public function get($key, $default = null)
+    {
+        return $this->executeCommand(__FUNCTION__, null, func_get_args());
+    }
+
+    public function set($key, $value, $ttl = null)
+    {
+        return $this->executeCommand(__FUNCTION__, false, func_get_args());
+    }
+
+    public function delete($key)
+    {
+        return $this->executeCommand(__FUNCTION__, false, func_get_args());
+    }
+
+    public function clear()
+    {
+        return $this->executeCommand(__FUNCTION__, false);
+    }
+
+    public function getMultiple($keys, $default = null)
+    {
+        $result = $this->executeCommand(__FUNCTION__, null, func_get_args());
+        if (is_array($result)) {
+            return $result;
+        }
+
+        $return_array = [];
+
+        if (is_null($result)) {
+            foreach ($keys as $key) {
+                $return_array[$key] = $default;
+            }
+        }
+
+        return [];
+    }
+
+    public function setMultiple($values, $ttl = null)
+    {
+        return $this->executeCommand(__FUNCTION__, false, func_get_args());
+    }
+
+    public function deleteMultiple($keys)
+    {
+        return $this->executeCommand(__FUNCTION__, false, func_get_args());
+    }
+
+    public function has($key)
+    {
+        return $this->executeCommand(__FUNCTION__, false, func_get_args());
+    }
+
+    private function executeCommand(string $command, $default, array ...$arguments)
+    {
+        $cache = $this->getSimpleCacheClient();
+
+        if (!$cache) {
+            return $default;
+        }
+
+        if (count($arguments) > 0) {
+            return $cache->$command(...$arguments);
+        }
+
+        return $cache->$command();
+    }
+
+    private function getSimpleCacheClient()
     {
         // Return SimpleCache implementation if it already exists
         if (isset($this->simple_cache_client)) {
@@ -64,71 +132,5 @@ class Cache implements CacheInterface
 
         // Failed to create SimpleCache implementation
         return $this->simple_cache_client = false;
-    }
-
-    private function _executeCommand(string $command, $default, array ...$arguments)
-    {
-        $cache = $this->_getSimpleCacheClient();
-        if (!$cache) {
-            return $default;
-        }
-        if (count($arguments) > 0) {
-            return $cache->$command(...$arguments);
-        } else {
-            return $cache->$command();
-        }
-    }
-
-    public function get($key, $default = null)
-    {
-        return $this->_executeCommand(__FUNCTION__, null, func_get_args());
-    }
-
-    public function set($key, $value, $ttl = null)
-    {
-        return $this->_executeCommand(__FUNCTION__, false, func_get_args());
-    }
-
-    public function delete($key)
-    {
-        return $this->_executeCommand(__FUNCTION__, false, func_get_args());
-    }
-
-    public function clear()
-    {
-        return $this->_executeCommand(__FUNCTION__, false);
-    }
-
-    public function getMultiple($keys, $default = null)
-    {
-        $result = $this->_executeCommand(__FUNCTION__, null, func_get_args());
-        if (is_array($result)) {
-            return $result;
-        }
-
-        $return_array = [];
-
-        if (is_null($result)) {
-            foreach ($keys as $key) {
-                $return_array[$key] = $default;
-            }
-        }
-
-        return [];
-    }
-
-    public function setMultiple($values, $ttl = null)
-    {
-        return $this->_executeCommand(__FUNCTION__, false, func_get_args());
-    }
-
-    public function deleteMultiple($keys)
-    {
-        return $this->_executeCommand(__FUNCTION__, false, func_get_args());
-    }
-
-    public function has($key)
-    {
-        return $this->_executeCommand(__FUNCTION__, false, func_get_args());
     }
 }
